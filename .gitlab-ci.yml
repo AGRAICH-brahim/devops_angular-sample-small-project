@@ -8,8 +8,7 @@
 stages:
   - compile
   - test
-  - build-image
-  - push-image-dockerhub
+  - docker
 
 include:
   - template: Jobs/SAST.gitlab-ci.yml
@@ -79,28 +78,17 @@ sast_angular:
     - changes:
       - "src/**/*"
 
-build-docker-image:
-  stage: build-image
+docker-build-and-push:
   image: docker:latest
-  script:
-    - docker build -t $DOCKER_USERNAME/angular_pipeline:$CI_COMMIT_SHORT_SHA .
-    - docker save $DOCKER_USERNAME/angular_pipeline:$CI_COMMIT_SHORT_SHA > image.tar
-  artifacts:
-    paths:
-      - image.tar
-    expire_in: 1 hour
-
-push-to-dockerhub:
-  stage: push-image-dockerhub
-  image: docker:latest
-  needs:
-    - build-docker-image
+  stage: docker
+  services:
+    - docker:dind
   before_script:
-    - docker load < image.tar
-    - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+    - echo "Logging in to Docker Hub..."
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   script:
-    - docker push $DOCKER_USERNAME/angular_pipeline:$CI_COMMIT_SHORT_SHA
-    - docker tag $DOCKER_USERNAME/angular_pipeline:$CI_COMMIT_SHORT_SHA $DOCKER_USERNAME/angular_pipeline:latest
+    - echo "Building Docker image..."
+    - docker build -t $DOCKER_USERNAME/angular_pipeline:latest .
+    - echo "Pushing Docker image to Docker Hub..."
     - docker push $DOCKER_USERNAME/angular_pipeline:latest
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
