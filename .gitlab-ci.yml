@@ -16,9 +16,9 @@ include:
 
 variables:
   STATIC_ADDRESS: "http://" # Address to deploy application
-  SKIP_SAST: "false" # Environment variable to control SAST test jobs
-  SKIP_CONTAINER_SCAN: "false" # Environment variable to control Container Scanning jobs
-  SKIP_SCA: "false" # Environment variable to control SCA test jobs
+  SKIP_SAST: "false" # Ensure this is false to run SAST
+  SKIP_CONTAINER_SCAN: "false" 
+  SKIP_SCA: "false" # Ensure this is false to run SCA
 
   DEPENDENCY_SCANNING_DISABLED: 'true' # Variable for gitlab managed SCA
   SAST_DISABLED: 'true'
