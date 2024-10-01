@@ -7,7 +7,7 @@
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 stages:
 - compile
-
+- test
 variables:
   STATIC_ADDRESS: "http://" # Address to deploy application
 
@@ -22,3 +22,11 @@ compile:
       - node_modules/ # Share the installed dependencies
       - dist/          # Share the build artifacts
     expire_in: 1 hour
+
+unit_test:
+  stage: test
+  image: node:20.17.0-alpine
+  dependencies:
+    - compile
+  script:
+    - npm run test
