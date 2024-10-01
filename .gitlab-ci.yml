@@ -8,7 +8,7 @@
 stages:
   - compile
   - test
-  - build-docker-image
+  - build-image
   - push-image-dockerhub
 
 include:
@@ -80,22 +80,27 @@ sast_angular:
       - "src/**/*"
 
 build-docker-image:
-  stage: build-docker-image
+  stage: build-image
   image: docker:latest
-  services:
-    - docker:dind
   script:
-    - docker info
-    - docker build -t $DOCKER_USERNAME/angular_pipeline:latest .
+    - docker build -t $DOCKER_USERNAME/angular_pipeline:$CI_COMMIT_SHORT_SHA .
+    - docker save $DOCKER_USERNAME/angular_pipeline:$CI_COMMIT_SHORT_SHA > image.tar
+  artifacts:
+    paths:
+      - image.tar
+    expire_in: 1 hour
 
-push-image-dockerhub:
+push-to-dockerhub:
   stage: push-image-dockerhub
   image: docker:latest
-  services:
-    - docker:dind
+  needs:
+    - build-docker-image
   before_script:
+    - docker load < image.tar
     - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   script:
-    - docker info
-    - docker push medoubia/angular_pipeline:latest
-
+    - docker push $DOCKER_USERNAME/angular_pipeline:$CI_COMMIT_SHORT_SHA
+    - docker tag $DOCKER_USERNAME/angular_pipeline:$CI_COMMIT_SHORT_SHA $DOCKER_USERNAME/angular_pipeline:latest
+    - docker push $DOCKER_USERNAME/angular_pipeline:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
