@@ -8,8 +8,24 @@
 stages:
 - compile
 - test
+
+
+include:
+  - template: Jobs/SAST.gitlab-ci.yml
+  - template: Jobs/Dependency-Scanning.gitlab-ci.yml
+  - template: Jobs/Container-Scanning.gitlab-ci.yml 
+
+
 variables:
-  STATIC_ADDRESS: "http://" # Address to deploy application
+  STATIC_ADDRESS: "http://" # Adress to deploy application
+  SKIP_SAST: "false" # Environment variable to control SAST test jobs
+  SKIP_CONTAINER_SCAN: "false" # Environment variable to control Container Scanning jobs
+  SKIP_SCA: "false" # Environment variable to control SCA test jobs
+
+  DEPENDENCY_SCANNING_DISABLED: 'true' # Variable for gitlab managed sca
+  SAST_DISABLED: 'true'
+  CONTAINER_SCANNING_DISABLED: 'true'
+
 
 compile:
   stage: compile
@@ -30,3 +46,41 @@ unit_test:
     - compile
   script:
     - npm run test
+
+sca:
+  stage: test
+  # tags:
+  # - docker
+  extends:
+    - .ds-analyzer
+    - .cyclonedx-reports
+  rules:
+    - if: '$SKIP_SCA == "true" || $SKIP_SCA == "1"'
+      when: never
+    - changes:
+      - "src/**/*"
+  variables:
+    DS_ANALYZER_NAME: "gemnasium"
+
+    
+sast_angular:
+  extends: .sast-analyzer
+  stage: test
+  tags:
+   - docker
+  image:
+    name: "$SAST_ANALYZER_IMAGE"
+  variables:
+    SEARCH_MAX_DEPTH: 20
+    SAST_ANALYZER_IMAGE_TAG: '5'
+    SAST_ANALYZER_IMAGE: "$SECURE_ANALYZERS_PREFIX/semgrep:$SAST_ANALYZER_IMAGE_TAG$SAST_IMAGE_SUFFIX"
+  artifacts:
+    paths:
+      - gl-sast-report.json
+    reports:
+      sast: gl-sast-report.json
+  rules:
+    - if: '$SKIP_SAST == "true" || $SKIP_SAST == "1"'
+      when: never
+    - changes:
+      - "src/**/*"
