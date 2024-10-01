@@ -7,13 +7,15 @@
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 stages:
   - build
-  - test
+
+# Build Job
 build-job:
   stage: build
+  image: node:18  # Use Node.js image with npm
   script:
     - echo "Building the project..."
     - npm install  # Install project dependencies
     - npm run build  # Build the project
   artifacts:
     paths:
-      - dist/
+      - dist/  # Store build artifacts
