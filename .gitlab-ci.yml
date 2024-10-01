@@ -90,6 +90,9 @@ build-docker-image:
 
 push-image-dockerhub:
   stage: push-image-dockerhub
+  image: docker:latest
+  services:
+    - docker:dind
   before_script:
     - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   script:
