@@ -81,6 +81,9 @@ sast_angular:
 
 build-docker-image:
   stage: build-docker-image
+  image: docker:latest
+  services:
+    - docker:dind
   script:
     - docker info
     - docker build -t medoubia/angular_project .
