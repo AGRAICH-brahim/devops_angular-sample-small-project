@@ -8,6 +8,8 @@
 stages:
   - compile
   - test
+  - build-docker-image
+  - push-image-dockerhub
 
 include:
   - template: Jobs/SAST.gitlab-ci.yml
@@ -76,3 +78,18 @@ sast_angular:
       when: never
     - changes:
       - "src/**/*"
+
+build-docker-image:
+  stage: build-docker-image
+  script:
+    - docker info
+    - docker build -t medoubia/angular_project .
+
+push-image-dockerhub:
+  stage: push-image-dockerhub
+  before_script:
+    - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  script:
+    - docker info
+    - docker push medoubia/angular_project
+
