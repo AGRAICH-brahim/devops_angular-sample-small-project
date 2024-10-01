@@ -9,6 +9,7 @@ stages:
   - compile
   - test
   - docker
+  - deploy
 
 include:
   - template: Jobs/SAST.gitlab-ci.yml
@@ -91,4 +92,16 @@ docker-build-and-push:
     - docker build -t $DOCKER_USERNAME/angular_pipeline:latest .
     - echo "Pushing Docker image to Docker Hub..."
     - docker push $DOCKER_USERNAME/angular_pipeline:latest
+
+deploy_to_k8s: 
+  stage: deploy
+  image: bitnami/kubectl:latest
+  services:
+    - docker:dind
+  before_script:
+  - echo "$KUBE_CONFIG" | base64 -d > /root/.kube/config
+  script:
+    - echo "Deploying to Kubernetes..."
+    - kubectl apply -f deploymentservice.yaml  # Applying the Kubernetes deployment and service
+    - kubectl rollout status deployment/angular-k8s-deployment  # Wait for the deployment to finish
 
