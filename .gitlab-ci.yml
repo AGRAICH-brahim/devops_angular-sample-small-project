@@ -28,8 +28,6 @@ variables:
 unit_test:
   stage: test
   image: node:20.17.0-alpine
-  dependencies:
-    - compile
   script:
     - npm run test
 
