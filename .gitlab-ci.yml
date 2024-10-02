@@ -29,6 +29,7 @@ unit_test:
   stage: test
   image: node:20.17.0-alpine
   script:
+    - npm install  # Install dependencies
     - npm run test
 
 sca:
