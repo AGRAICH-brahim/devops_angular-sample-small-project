@@ -95,6 +95,9 @@ docker-build-and-push:
     - docker build -t $DOCKER_USERNAME/angular_pipeline:latest .
     - echo "Pushing Docker image to Docker Hub..."
     - docker push $DOCKER_USERNAME/angular_pipeline:latest
+    - echo "Running on local runner"
+  tags:
+    - windows
 
 deploy_to_k8s: 
   stage: deploy
