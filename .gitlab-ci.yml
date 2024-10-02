@@ -1,6 +1,6 @@
 stages:
-  - test
   - build
+  - test
   - deploy
 
 include:
@@ -16,7 +16,7 @@ variables:
 
   DEPENDENCY_SCANNING_DISABLED: 'false' # Variable for gitlab managed SCA
   SAST_DISABLED: 'false'
-  CONTAINER_SCANNING_DISABLED: 'true'
+  CONTAINER_SCANNING_DISABLED: 'false'
 
 unit_test:
   stage: test
