@@ -18,24 +18,11 @@ variables:
   SAST_DISABLED: 'true'
   CONTAINER_SCANNING_DISABLED: 'true'
 
-compile:
-  stage: build
-  image: node:20.17.0-alpine
-  script:
-    - npm install
-    - npm run build
-  artifacts:
-    paths:
-      - node_modules/ # Share the installed dependencies
-      - dist/          # Share the build artifacts
-    expire_in: 1 hour
-
 unit_test:
   stage: test
   image: node:20.17.0-alpine
-  dependencies:
-    - compile
   script:
+    - npm install
     - npm run test
 
 sca:
