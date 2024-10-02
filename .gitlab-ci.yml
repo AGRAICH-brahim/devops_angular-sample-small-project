@@ -16,7 +16,7 @@ variables:
 
   DEPENDENCY_SCANNING_DISABLED: 'false' # Variable for gitlab managed SCA
   SAST_DISABLED: 'false'
-  CONTAINER_SCANNING_DISABLED: 'false'
+  CONTAINER_SCANNING_DISABLED: 'true'
 
 unit_test:
   stage: test
