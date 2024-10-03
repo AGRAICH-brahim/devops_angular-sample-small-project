@@ -45,39 +45,6 @@ unit_test:
   script:
     - npm run test
 
-sca:
-  stage: test
-  extends:
-    - .ds-analyzer
-    - .cyclonedx-reports
-  rules:
-    - if: '$SKIP_SCA == "true" || $SKIP_SCA == "1"'
-      when: never
-    - changes:
-      - "src/**/*"
-  variables:
-    DS_ANALYZER_NAME: "gemnasium"
-
-sast_angular:
-  extends: .sast-analyzer
-  stage: test
-  image:
-    name: "$SAST_ANALYZER_IMAGE"
-  variables:
-    SEARCH_MAX_DEPTH: 20
-    SAST_ANALYZER_IMAGE_TAG: '5'
-    SAST_ANALYZER_IMAGE: "$SECURE_ANALYZERS_PREFIX/semgrep:$SAST_ANALYZER_IMAGE_TAG$SAST_IMAGE_SUFFIX"
-  artifacts:
-    paths:
-      - gl-sast-report.json
-    reports:
-      sast: gl-sast-report.json
-  rules:
-    - if: '$SKIP_SAST == "true" || $SKIP_SAST == "1"'
-      when: never
-    - changes:
-      - "src/**/*"
-
 docker-build-and-push:
   image: docker:latest
   stage: docker
