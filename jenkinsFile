@@ -2,9 +2,13 @@ pipeline {
     agent any
 
     stages {
-        stage('Compile') {
+        stage('Install Dependencies') {
             steps {
                 sh 'npm install'
+            }
+        }
+        stage('Build') {
+            steps {
                 sh 'npm run build'
             }
         }
@@ -13,9 +17,10 @@ pipeline {
     post {
         success {
             archiveArtifacts artifacts: 'dist/**/*', fingerprint: true
+            echo 'Build completed and artifacts archived successfully.'
         }
         failure {
-            echo 'The Pipeline failed. Please check the logs for details.'
+            echo 'The pipeline failed. Please check the logs for details.'
         }
     }
 }
