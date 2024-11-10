@@ -42,17 +42,19 @@ pipeline {
                 }
             }
         }
-        stage('push-image-to-hub'){
-            steps{
-                script{
-                    withCredentials([string(credentialsId: 'docker-hub-pwdScret', variable: 'dockerhubpwd')]) {
-                    sh 'docker login -u medoubia -p${dockerhubpwd}'
-                    }
 
-                    sh 'docker push medoubia/simple_angular_image'
+    
+        stage('push-image-to-hub') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'docker-hub-pwdScret', variable: 'dockerhubpwd')]) {
+                        sh 'docker login -u medoubia -p $dockerhubpwd'
+                    }
+                    sh 'docker push medoubia/simple_angular_image:latest'
                 }
             }
         }
+
     }
     post {
         success {
