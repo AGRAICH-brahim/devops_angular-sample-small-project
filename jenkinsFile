@@ -1,22 +1,20 @@
-pipeline{
+pipeline {
     agent any
 
-    stages{
-        stage('Compile'){
+    stages {
+        stage('Compile') {
             steps {
-                // Use the full paths for npm and node commands
-                sh '/home/medobia/.nvm/versions/node/v22.11.0/bin/npm install'
-                sh '/home/medobia/.nvm/versions/node/v22.11.0/bin/npm run build'
+                sh 'npm install'
+                sh 'npm run build'
             }
         }
     }
 
-
-    post{
-        success{
+    post {
+        success {
             archiveArtifacts artifacts: 'dist/**/*', fingerprint: true
         }
-        failure{
+        failure {
             echo 'The Pipeline failed. Please check the logs for details.'
         }
     }
