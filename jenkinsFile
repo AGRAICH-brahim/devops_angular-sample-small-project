@@ -1,19 +1,19 @@
 pipeline {
     agent any
-
+    environment {
+        DOCKER_HOST = 'unix:///var/run/docker.sock'
+    }
     stages {
         stage('Install Dependencies') {
             steps {
                 sh 'npm install'
             }
         }
-
         stage('Build') {
             steps {
                 sh 'npm run build'
             }
         }
-
         stage('Test') {
             steps {
                 sh 'npm run test -- --ci --reporters=default --reporters=jest-junit'
@@ -24,14 +24,11 @@ pipeline {
                 }
             }
         }
-
-        // Verify Docker Access stage
         stage('Verify Docker Access') {
             steps {
                 sh 'docker ps'
             }
         }
-
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t medoubia/simple_angular_image:latest .'
@@ -46,7 +43,6 @@ pipeline {
             }
         }
     }
-
     post {
         success {
             archiveArtifacts artifacts: 'dist/**/*', fingerprint: true
