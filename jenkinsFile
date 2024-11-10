@@ -24,6 +24,19 @@ pipeline {
                 }
             }
         }
+        stage('Build-docker-Image'){
+            steps{
+                sh 'docker build -t medoubia/simple_angular_Image:latest .'
+            }
+            post{
+                success{
+                    echo 'Docker imgae created successfully'
+                }
+                failure{
+                    echo 'Docker image createion failed'
+                }
+            }
+        }
     }
 
     post {
