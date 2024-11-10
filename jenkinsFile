@@ -3,9 +3,10 @@ pipeline{
 
     stages{
         stage('Compile'){
-            steps{
-                sh 'npm install'
-                sh 'npm build'
+            steps {
+                // Use the full paths for npm and node commands
+                sh '/home/medobia/.nvm/versions/node/v22.11.0/bin/npm install'
+                sh '/home/medobia/.nvm/versions/node/v22.11.0/bin/npm run build'
             }
         }
     }
