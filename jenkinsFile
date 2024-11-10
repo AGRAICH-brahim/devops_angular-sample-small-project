@@ -7,16 +7,16 @@ pipeline {
                 sh 'npm install'
             }
         }
+
         stage('Build') {
             steps {
                 sh 'npm run build'
             }
         }
 
-        stage('Test'){
-            steps{
+        stage('Test') {
+            steps {
                 sh 'npm run test -- --ci --reporters=default --reporters=jest-junit'
-                
             }
             post {
                 always {
@@ -24,16 +24,24 @@ pipeline {
                 }
             }
         }
-        stage('Build-docker-Image'){
-            steps{
-                sh 'docker build -t medoubia/simple_angular_Image:latest .'
+
+        // Verify Docker Access stage
+        stage('Verify Docker Access') {
+            steps {
+                sh 'docker ps'
             }
-            post{
-                success{
-                    echo 'Docker imgae created successfully'
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t medoubia/simple_angular_image:latest .'
+            }
+            post {
+                success {
+                    echo 'Docker image created successfully'
                 }
-                failure{
-                    echo 'Docker image createion failed'
+                failure {
+                    echo 'Docker image creation failed'
                 }
             }
         }
