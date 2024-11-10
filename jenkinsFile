@@ -15,7 +15,12 @@ pipeline {
 
         stage('Test'){
             steps{
-                sh 'npm run test'
+                sh 'pm run test -- --ci --reporters=default --reporters=jest-junit'
+                post {
+                   always {
+                    junit 'junit.xml'
+                   }
+                }
             }
         }
     }
