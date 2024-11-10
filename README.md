@@ -50,3 +50,4 @@ This project is licensed under the [MIT License](LICENSE).
 ---
 
  **Angular 18.1**, **open-source**, **modular architecture**, **template**,
+# angular-sample-small-project
