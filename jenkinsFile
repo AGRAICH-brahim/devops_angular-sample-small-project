@@ -31,7 +31,7 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t medoubia/simple_angular_image:latest .'
+                sh 'docker build -t agraich/simple_angular_image:latest .'
             }
             post {
                 success {
@@ -46,9 +46,9 @@ pipeline {
             steps {
                 script {
                     withCredentials([string(credentialsId: 'docker-hub-pwdScret', variable: 'dockerhubpwd')]) {
-                        sh 'echo $dockerhubpwd | docker login -u medoubia --password-stdin'
+                        sh 'echo $dockerhubpwd | docker login -u agraich --password-stdin'
                     }
-                    sh 'docker push medoubia/simple_angular_image:latest'
+                    sh 'docker push agraich/simple_angular_image:latest'
                 }
             }
         }
